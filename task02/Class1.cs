@@ -24,7 +24,7 @@ public class StudentService {
     public ILookup<string, Student> GroupStudentsByFaculty()
         => _students.ToLookup(c => c.Faculty);
 
-    public string GetFacultyWithHighestAverageGrade()
+    public string? GetFacultyWithHighestAverageGrade()
         => _students.Where(c => c.Grades.Any())
         .GroupBy(c => c.Faculty)
         .OrderByDescending(s => s.Average(v => v.Grades.Average()))
