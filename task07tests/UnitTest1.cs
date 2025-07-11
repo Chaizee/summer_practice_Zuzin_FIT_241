@@ -17,6 +17,7 @@ public class AttributeReflectionTests
     public void Method_HasDisplayNameAttribute()
     {
         var method = typeof(SampleClass).GetMethod("TestMethod");
+        Assert.NotNull(method);
         var attribute = method.GetCustomAttribute<DisplayNameAttribute>();
         Assert.NotNull(attribute);
         Assert.Equal("Тестовый метод", attribute.DisplayName);
@@ -26,6 +27,7 @@ public class AttributeReflectionTests
     public void Property_HasDisplayNameAttribute()
     {
         var prop = typeof(SampleClass).GetProperty("Number");
+        Assert.NotNull(prop);
         var attribute = prop.GetCustomAttribute<DisplayNameAttribute>();
         Assert.NotNull(attribute);
         Assert.Equal("Числовое свойство", attribute.DisplayName);
