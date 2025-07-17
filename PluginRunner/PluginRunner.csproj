@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+
+  <Target Name="CopyPlugins" AfterTargets="Build">
+    <ItemGroup>
+      <PluginAssemblies Include="..\MyPluginA\bin\Debug\net8.0\*.dll" />
+      <PluginAssemblies Include="..\MyPluginB\bin\Debug\net8.0\*.dll" />
+    </ItemGroup>
+    <MakeDir Directories="$(OutDir)\Plugins" />
+    <Copy SourceFiles="@(PluginAssemblies)" DestinationFolder="$(OutDir)\Plugins" />
+  </Target>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PluginLoader\PluginLoader.csproj" />
+    <ProjectReference Include="..\PluginContracts\PluginContracts.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>
