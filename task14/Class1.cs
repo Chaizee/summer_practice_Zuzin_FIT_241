@@ -1,42 +1,40 @@
-﻿namespace task14;
+﻿using System.Threading;
+namespace task14;
 
 public class DefiniteIntegral
 {
     public static double Solve(double a, double b, Func<double, double> function, double step, int threadsnumber)
-    {
-        double result = 0.0;
-        double stepSize = (b - a) / threadsnumber;
-        Object lockObj = new Object();
+        {
+            double length_for_thread = (b - a) / threadsnumber;
+            double[] partial_sums = new double[threadsnumber];
 
-        using Barrier barrier = new Barrier(threadsnumber + 1);
-
-        Thread[] threads = new Thread[threadsnumber];
-
-        for (int i = 0; i < threadsnumber; i++) {
-
-            int threadId = i;
-
-            new Thread(() => 
+            Parallel.For(0, threadsnumber, i =>
             {
-                double localStart = a + threadId * stepSize;
-                double localEnd = (threadId == threadsnumber - 1) ? b : localStart + stepSize;
+                double x1 = a + i * length_for_thread;
+                double x2 = (i == threadsnumber - 1) ? b : x1 + length_for_thread;
 
-                double _res = 0.0;
-
-                for (double j = localStart; j < localEnd; j+=step ) {
-                    
-                    double Next = Math.Min(j+step, localEnd);
-                    _res += 0.5 * (function(j) + function(Next)) * (Next - j);
+                double local_sum = 0;
+                for (double x = x1; x < x2; x += step)
+                {
+                    double x_next = Math.Min(x + step, x2);
+                    local_sum += 0.5 * (function(x) + function(x_next)) * (x_next - x);
                 }
+                partial_sums[i] = local_sum;
+            });
 
-                lock (lockObj) { result += _res; }
-
-                barrier.SignalAndWait();
-            }).Start();
+            return partial_sums.Sum();
         }
 
-        barrier.SignalAndWait();
 
+
+    public static double SolveSingle(double a, double b, Func<double, double> function, double step)
+    {
+        double result = 0.0;
+        for (double x = a; x < b; x += step)
+        {
+            double next = Math.Min(x + step, b);
+            result += 0.5 * (function(x) + function(next)) * (next - x);
+        }
         return result;
     }
 }
